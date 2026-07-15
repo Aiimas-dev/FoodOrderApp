@@ -1,98 +1,229 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { router } from "expo-router";
+import * as SecureStore from "expo-secure-store";
+import {
+  Image,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const handleLogout = async () => {
+    await SecureStore.deleteItemAsync("token");
+    router.replace("/login");
+  };
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Header */}
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.welcome}>👋 Selamat Datang</Text>
+            <Text style={styles.restaurant}>QuickBite Restaurant</Text>
+          </View>
+
+          <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
+            <Text style={styles.logoutText}>Logout</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Banner */}
+        <View style={styles.banner}>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.bannerTitle}>🔥 Promo Hari Ini</Text>
+            <Text style={styles.bannerText}>Buy 1 Get 1 Burger</Text>
+            <Text style={styles.bannerSmall}>
+              Berlaku sampai pukul 22.00 WIB
+            </Text>
+          </View>
+
+          <Image
+            source={{
+              uri: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500",
+            }}
+            style={styles.bannerImage}
+          />
+        </View>
+
+        {/* Kategori */}
+        <Text style={styles.sectionTitle}>Kategori</Text>
+
+        <View style={styles.categoryRow}>
+          <View style={styles.categoryCard}>
+            <Text style={styles.icon}>🍔</Text>
+            <Text>Burger</Text>
+          </View>
+
+          <View style={styles.categoryCard}>
+            <Text style={styles.icon}>🍟</Text>
+            <Text>Snack</Text>
+          </View>
+
+          <View style={styles.categoryCard}>
+            <Text style={styles.icon}>🥤</Text>
+            <Text>Drink</Text>
+          </View>
+
+          <View style={styles.categoryCard}>
+            <Text style={styles.icon}>🍗</Text>
+            <Text>Chicken</Text>
+          </View>
+        </View>
+
+        {/* Info */}
+        <View style={styles.infoCard}>
+          <Text style={styles.infoTitle}>Nikmati makanan favoritmu</Text>
+
+          <Text style={styles.infoText}>
+            QuickBite menyediakan berbagai menu makanan siap saji dengan
+            kualitas terbaik, harga terjangkau dan pelayanan cepat.
+          </Text>
+        </View>
+
+        {/* Button */}
+        <TouchableOpacity
+          style={styles.menuButton}
+          onPress={() => router.push("/katalog")}
+        >
+          <Text style={styles.menuText}>🍟 Lihat Menu</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    backgroundColor: "#FFF5EE",
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    margin: 20,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+
+  welcome: {
+    color: "#777",
+    fontSize: 16,
+  },
+
+  restaurant: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#D62828",
+  },
+
+  logoutBtn: {
+    backgroundColor: "#D62828",
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 10,
+  },
+
+  logoutText: {
+    color: "#FFF",
+    fontWeight: "bold",
+  },
+
+  banner: {
+    marginHorizontal: 20,
+    backgroundColor: "#D62828",
+    borderRadius: 20,
+    flexDirection: "row",
+    padding: 18,
+    alignItems: "center",
+  },
+
+  bannerTitle: {
+    color: "#FFD60A",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
+
+  bannerText: {
+    color: "#FFF",
+    fontSize: 24,
+    fontWeight: "bold",
+    marginTop: 5,
+  },
+
+  bannerSmall: {
+    color: "#FFF",
+    marginTop: 8,
+  },
+
+  bannerImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 15,
+    marginLeft: 15,
+  },
+
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    margin: 20,
+    marginBottom: 10,
+  },
+
+  categoryRow: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginBottom: 20,
+  },
+
+  categoryCard: {
+    width: 75,
+    height: 80,
+    backgroundColor: "#FFF",
+    borderRadius: 15,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 5,
+  },
+
+  icon: {
+    fontSize: 28,
+    marginBottom: 5,
+  },
+
+  infoCard: {
+    backgroundColor: "#FFF",
+    marginHorizontal: 20,
+    borderRadius: 20,
+    padding: 20,
+    elevation: 5,
+  },
+
+  infoTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+
+  infoText: {
+    color: "#666",
+    lineHeight: 24,
+  },
+
+  menuButton: {
+    backgroundColor: "#D62828",
+    margin: 20,
+    padding: 18,
+    borderRadius: 15,
+  },
+
+  menuText: {
+    color: "#FFF",
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 18,
   },
 });
